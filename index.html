@@ -3,22 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animación de Corazón Neón</title>
+    <title>Alto Ahí - Exceso de Preciosura</title>
     <style>
-        /* Fondo oscuro idéntico al de la imagen */
+        /* Fondo color crema suave idéntico a la imagen */
         body {
             margin: 0;
-            background-color: #0b1115;
+            background-color: #fceade;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            font-family: Arial, sans-serif;
         }
-        canvas {
+
+        /* Contenedor de la tarjeta del perrito */
+        .card-container {
+            position: relative;
+            width: 90%;
+            max-width: 450px;
+            aspect-ratio: 1 / 1;
+            background-color: #fceade;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        /* Imagen del perrito ajustada perfectamente */
+        .card-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             display: block;
-            /* Crea el efecto de brillo neón verde alrededor del corazón */
-            filter: drop-shadow(0 0 12px rgba(0, 255, 128, 0.7));
+        }
+
+        /* El lienzo donde se dibujarán los corazones giratorios */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Permite hacer clic a través del canvas si es necesario */
+            z-index: 5;
         }
     </style>
 </head>
@@ -26,101 +54,98 @@
 
     <canvas id="heartCanvas"></canvas>
 
+    <div class="card-container">
+        <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600" alt="Perrito Policia">
+    </div>
+
     <script>
         const canvas = document.getElementById('heartCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Tamaño del lienzo ajustable
-        canvas.width = 600;
-        canvas.height = 600;
-
-        const particles = [];
-
-        // Fórmula matemática para calcular la silueta perfecta del corazón
-        function getHeartPoint(t) {
-            const x = 16 * Math.pow(Math.sin(t), 3);
-            const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
-            return { x: x * 12, y: -y * 12 }; 
+        // Ajustar el tamaño del canvas a toda la pantalla
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
 
-        // Clase para controlar cada partícula de luz
-        class Particle {
-            constructor(x, y, isTrail = false) {
-                this.x = x + canvas.width / 2;
-                this.y = y + canvas.height / 2 - 30;
-                this.size = Math.random() * 2 + 1;
-                
-                // Si es polvo de estrellas que sale volando, le damos velocidad aleatoria
-                this.vx = isTrail ? (Math.random() - 0.3) * 2.5 : 0;
-                this.vy = isTrail ? (Math.random() - 0.7) * 2.5 : 0;
-                
-                this.alpha = 1; // Opacidad inicial
-                // Tonos de verde brillante (escala HSL)
-                this.color = `hsla(${135 + Math.random() * 35}, 100%, 60%, `;
-                this.isTrail = isTrail;
+        const hearts = [];
+        const totalHearts = 25; // Cantidad de corazones flotando
+
+        // Clase para crear y controlar cada corazón
+        class SpinningHeart {
+            constructor() {
+                this.reset();
+                // Aparecen en posiciones aleatorias de la pantalla al inicio
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+            }
+
+            reset() {
+                this.size = Math.random() * 12 + 8; // Tamaños pequeños variados
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + this.size + Math.random() * 100; // Aparecen desde abajo
+                this.speedY = -(Math.random() * 1 + 0.5); // Velocidad de subida suave
+                this.angle = Math.random() * Math.PI * 2; // Ángulo de rotación inicial
+                this.spinSpeed = (Math.random() - 0.5) * 0.03; // Velocidad y dirección de giro
+                this.wobble = Math.random() * Math.PI; // Movimiento ondulado horizontal
+                this.wobbleSpeed = Math.random() * 0.02 + 0.01;
+                // Color rosa/rojo pastel como el de la imagen original
+                this.color = `rgba(${240 + Math.random() * 15}, ${130 + Math.random() * 20}, ${140 + Math.random() * 20}, ${Math.random() * 0.3 + 0.6})`;
             }
 
             update() {
-                if (this.isTrail) {
-                    this.x += this.vx;
-                    this.y += this.vy;
-                    this.alpha -= 0.012; // Las partículas voladoras se desvanecen rápido
-                } else {
-                    this.alpha -= 0.006; // La línea principal se desvanece más lento
+                this.y += this.speedY;
+                this.angle += this.spinSpeed; // Hace que el corazón gire sobre su propio eje
+                this.wobble += this.wobbleSpeed;
+                this.x += Math.sin(this.wobble) * 0.5; // Efecto flotante hacia los lados
+
+                // Si sale de la pantalla por arriba, se reinicia abajo
+                if (this.y < -this.size) {
+                    this.reset();
                 }
             }
 
             draw() {
                 ctx.save();
-                ctx.globalAlpha = this.alpha;
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle); // Aplicamos el giro continuo
+
+                // Dibujar la forma matemática de un corazón clásico en el canvas
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color + this.alpha + ')';
+                ctx.fillStyle = this.color;
+                
+                // Dibujo vectorial del corazón a partir de su centro
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, -this.size / 3, -this.size, 0);
+                ctx.bezierCurveTo(-this.size, this.size / 2, -this.size / 3, this.size, 0, this.size * 1.3);
+                ctx.bezierCurveTo(this.size / 3, this.size, this.size, this.size / 2, this.size, 0);
+                ctx.bezierCurveTo(this.size, -this.size / 3, this.size / 2, -this.size / 2, 0, 0);
+                
                 ctx.fill();
                 ctx.restore();
             }
         }
 
-        let t = 0;
+        // Inicializar el arreglo de corazones
+        for (let i = 0; i < totalHearts; i++) {
+            hearts.push(new SpinningHeart());
+        }
 
+        // Bucle de animación infinito
         function animate() {
-            // Este fondo semi-transparente crea el efecto de "estela" o rastro de movimiento
-            ctx.fillStyle = 'rgba(11, 17, 21, 0.12)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Dibuja el corazón de forma continua
-            if (t < Math.PI * 2) {
-                for(let i = 0; i < 4; i++) {
-                    const point = getHeartPoint(t);
-                    
-                    // Crea la línea base del corazón
-                    particles.push(new Particle(point.x, point.y, false));
-                    
-                    // Rompe el corazón en partículas en la parte superior (como la imagen)
-                    if (t > Math.PI * 1.4 || t < Math.PI * 0.6) {
-                        if(Math.random() > 0.3) {
-                            particles.push(new Particle(point.x, point.y, true));
-                        }
-                    }
-                    t += 0.01;
-                }
-            } else {
-                t = 0; // Reinicia el ciclo para que nunca se detenga
-            }
-
-            // Renderiza y limpia las partículas viejas
-            for (let i = particles.length - 1; i >= 0; i--) {
-                particles[i].update();
-                particles[i].draw();
-                if (particles[i].alpha <= 0) {
-                    particles.splice(i, 1);
-                }
-            }
+            // Actualizar y dibujar cada corazoncito de fondo
+            hearts.forEach(heart => {
+                heart.update();
+                heart.draw();
+            });
 
             requestAnimationFrame(animate);
         }
 
-        // Iniciar animación
         animate();
     </script>
 </body>
