@@ -142,4 +142,60 @@
                 this.y = canvas.height + this.size + Math.random() * 100;
                 this.speedY = -(Math.random() * 0.6 + 0.35); // Movimiento de ascenso lento y tierno
                 this.angle = Math.random() * Math.PI * 2;
-                this.spinSpeed = (Math.random() - 0.5) * 0.025; // Giro
+                this.spinSpeed = (Math.random() - 0.5) * 0.025; // Giro suave sobre su propio eje
+                this.wobble = Math.random() * Math.PI;
+                this.wobbleSpeed = Math.random() * 0.015 + 0.01;
+                // Color rosa/salmón pastel con opacidades aleatorias para dar profundidad
+                this.color = `rgba(240, 123, 101, ${Math.random() * 0.35 + 0.55})`;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.angle += this.spinSpeed;
+                this.wobble += this.wobbleSpeed;
+                this.x += Math.sin(this.wobble) * 0.3;
+
+                if (this.y < -this.size) {
+                    this.reset();
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+
+                ctx.beginPath();
+                ctx.fillStyle = this.color;
+                
+                // Curva perfecta del corazón
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, -this.size / 3, -this.size, 0);
+                ctx.bezierCurveTo(-this.size, this.size / 2, -this.size / 3, this.size, 0, this.size * 1.35);
+                ctx.bezierCurveTo(this.size / 3, this.size, this.size, this.size / 2, this.size, 0);
+                ctx.bezierCurveTo(this.size, -this.size / 3, this.size / 2, -this.size / 2, 0, 0);
+                
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < totalHearts; i++) {
+            hearts.push(new SpinningHeart());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            hearts.forEach(heart => {
+                heart.update();
+                heart.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
