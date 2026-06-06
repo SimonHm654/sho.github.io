@@ -34,16 +34,16 @@
             max-width: 420px;
         }
 
-        /* RECUADRO CENTRAL MEJORADO (Estilo carta de amor) */
+        /* Recuadro central mejorado (Estilo carta de amor) */
         .poem-card {
-            background-color: rgba(255, 255, 255, 0.92); /* Blanco suave con ligera transparencia */
+            background-color: rgba(255, 255, 255, 0.94); /* Blanco suave nítido */
             padding: 40px 35px;
             border-radius: 32px;
             box-shadow: 0 15px 35px rgba(240, 123, 101, 0.12);
             border: 2px solid rgba(240, 123, 101, 0.15);
             width: 100%;
             box-sizing: border-box;
-            min-height: 280px; /* Evita que el recuadro cambie de tamaño bruscamente */
+            min-height: 280px; /* Evita saltos bruscos de tamaño */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -52,13 +52,13 @@
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
 
-        /* Efecto de transición suave al cambiar de texto */
+        /* Transición de desvanecimiento entre poemas */
         .poem-card.fade {
             opacity: 0;
             transform: scale(0.97) translateY(5px);
         }
 
-        /* Adornos estéticos laterales */
+        /* Adornos estéticos de destellos */
         .decorations {
             color: #f07b65;
             font-size: 28px;
@@ -67,7 +67,7 @@
             vertical-align: middle;
         }
 
-        /* Estilo para las líneas café oscuro (Ortografía cuidada) */
+        /* Texto café oscuro pulido */
         .text-dark {
             color: #4a2810;
             font-size: 38px;
@@ -76,7 +76,7 @@
             margin: 0;
         }
 
-        /* Estilo para las líneas rosa salmón */
+        /* Texto rosa salmón destacado */
         .text-pink {
             color: #f07b65;
             font-size: 48px;
@@ -86,7 +86,7 @@
             display: block;
         }
 
-        /* BOTÓN DE FLECHA ROMÁNTICA */
+        /* BOTÓN SOLO CON LA FLECHA */
         .arrow-btn {
             margin-top: 25px;
             background-color: #f07b65;
@@ -94,7 +94,7 @@
             border: none;
             width: 60px;
             height: 60px;
-            font-size: 24px;
+            font-size: 26px;
             border-radius: 50%;
             cursor: pointer;
             z-index: 20;
@@ -104,9 +104,10 @@
             box-shadow: 0 8px 20px rgba(240, 123, 101, 0.3);
             transition: all 0.2s ease;
             outline: none;
+            padding: 0;
         }
 
-        /* Efectos del botón */
+        /* Efectos dinámicos del botón */
         .arrow-btn:hover {
             transform: translateY(-3px) scale(1.05);
             box-shadow: 0 12px 24px rgba(240, 123, 101, 0.4);
@@ -125,7 +126,7 @@
             100% { transform: translateY(0px); }
         }
 
-        /* Lienzo para los corazones que dan vueltas en el fondo */
+        /* Lienzo trasero para los corazones escarchados giratorios */
         canvas {
             position: absolute;
             top: 0;
@@ -142,27 +143,26 @@
     <canvas id="heartCanvas"></canvas>
 
     <div class="romantic-wrapper">
-        
         <div class="poem-card" id="poemCard">
             <p class="text-dark">
-                <span class="decorations">✨</span>alto ahí<span class="decorations">✨</span><br>
-                vienes con
+                <span class="decorations">✨</span>¡Alto ahí!<span class="decorations">✨</span><br>
+                Vienes con
             </p>
             <span class="text-pink">
                 exceso de<br>
-                preciosura
+                preciosura.
             </span>
         </div>
 
-        <button class="arrow-btn" id="nextBtn" onclick="changePoem()">➔💝</button>
+        <button class="arrow-btn" id="nextBtn" onclick="changePoem()">➔</button>
     </div>
 
     <script>
-        // --- BASE DE DATOS DE POEMAS CON ORTOGRAFÍA REVISADA ---
+        // --- POEMAS CON ORTOGRAFÍA REVISADA Y CORREGIDA ---
         const poems = [
             {
-                dark: "<span class='decorations'>✨</span>alto ahí<span class='decorations'>✨</span><br>vienes con",
-                pink: "exceso de<br>preciosura"
+                dark: "<span class='decorations'>✨</span>¡Alto ahí!<span class='decorations'>✨</span><br>Vienes con",
+                pink: "exceso de<br>preciosura."
             },
             {
                 dark: "En un mar de<br>estrellas,",
@@ -182,26 +182,22 @@
         const poemCard = document.getElementById('poemCard');
 
         function changePoem() {
-            // Animación de salida suave
             poemCard.classList.add('fade');
 
             setTimeout(() => {
-                // Siguiente índice
                 currentIndex = (currentIndex + 1) % poems.length;
                 
-                // Reemplazo del contenido manteniendo la ortografía correcta
                 poemCard.innerHTML = `
                     <p class="text-dark">${poems[currentIndex].dark}</p>
                     <span class="text-pink">${poems[currentIndex].pink}</span>
                 `;
                 
-                // Animación de entrada suave
                 poemCard.classList.remove('fade');
             }, 300);
         }
 
 
-        // --- ANIMACIÓN DE CORAZONES GIRATORIOS (FONDO INTACTO) ---
+        // --- EFECTO DE CORAZONES FLOTANTES, GIRATORIOS Y ESCARCHADOS ---
         const canvas = document.getElementById('heartCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -213,9 +209,9 @@
         window.addEventListener('resize', resizeCanvas);
 
         const hearts = [];
-        const totalHearts = 35;
+        const totalHearts = 35; 
 
-        class SpinningHeart {
+        class SparklingHeart {
             constructor() {
                 this.reset();
                 this.x = Math.random() * canvas.width;
@@ -223,22 +219,27 @@
             }
 
             reset() {
-                this.size = Math.random() * 11 + 9;
+                this.size = Math.random() * 10 + 8;
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + this.size + Math.random() * 100;
-                this.speedY = -(Math.random() * 0.55 + 0.35);
-                this.angle = Math.random() * Math.PI * 2;
-                this.spinSpeed = (Math.random() - 0.5) * 0.025;
+                this.speedY = -(Math.random() * 0.5 + 0.35); // Velocidad al flotar hacia arriba
+                this.angle = Math.random() * Math.PI * 2; // Ángulo inicial
+                this.spinSpeed = (Math.random() * 0.02 + 0.01) * (Math.random() < 0.5 ? 1 : -1); // Hace que giren constantemente
                 this.wobble = Math.random() * Math.PI;
                 this.wobbleSpeed = Math.random() * 0.015 + 0.01;
-                this.color = `rgba(240, 123, 101, ${Math.random() * 0.35 + 0.55})`;
+                
+                // Color base rosa salmón romántico
+                this.baseColor = { r: 240, g: 123, b: 101 };
+                this.alpha = Math.random() * 0.35 + 0.6;
+                // Brillo de escarcha individual
+                this.sparkleSize = Math.random() * 10 + 10;
             }
 
             update() {
                 this.y += this.speedY;
-                this.angle += this.spinSpeed;
+                this.angle += this.spinSpeed; // Giro continuo sobre su eje
                 this.wobble += this.wobbleSpeed;
-                this.x += Math.sin(this.wobble) * 0.25;
+                this.x += Math.sin(this.wobble) * 0.25; // Vaivén de balanceo
 
                 if (this.y < -this.size) {
                     this.reset();
@@ -248,11 +249,20 @@
             draw() {
                 ctx.save();
                 ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle);
+                ctx.rotate(this.angle); // Aplica el giro físico en pantalla
 
-                ctx.beginPath();
-                ctx.fillStyle = this.color;
+                // CONFIGURACIÓN DEL EFECTO ESCARCHADO (Brillo luminoso en los bordes)
+                ctx.shadowBlur = this.sparkleSize;
+                ctx.shadowColor = `rgba(255, 190, 180, ${this.alpha})`;
                 
+                ctx.beginPath();
+                // Creamos un degradado interno para simular destellos de purpurina
+                let gradient = ctx.createRadialGradient(0, 0, 1, 0, 0, this.size);
+                gradient.addColorStop(0, `rgba(255, 210, 200, ${this.alpha})`); // Centro brillante
+                gradient.addColorStop(0.8, `rgba(${this.baseColor.r}, ${this.baseColor.g}, ${this.baseColor.b}, ${this.alpha})`);
+                ctx.fillStyle = gradient;
+                
+                // Geometría clásica del corazón
                 ctx.moveTo(0, 0);
                 ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, -this.size / 3, -this.size, 0);
                 ctx.bezierCurveTo(-this.size, this.size / 2, -this.size / 3, this.size, 0, this.size * 1.35);
@@ -265,7 +275,7 @@
         }
 
         for (let i = 0; i < totalHearts; i++) {
-            hearts.push(new SpinningHeart());
+            hearts.push(new SparklingHeart());
         }
 
         function animate() {
