@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alto Ahí - Exceso de Preciosura</title>
     <style>
-        /* Fondo color crema exacto de la imagen */
+        /* Fondo color crema exacto de la imagen original */
         body {
             margin: 0;
             background-color: #fceade;
@@ -14,62 +14,39 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            /* Fuentes redondeadas similares a las del cartel */
-            font-family: 'Arial Rounded MT Bold', 'Ubuntu', sans-serif;
-            -webkit-user-select: none;
-            user-select: none;
         }
 
-        /* Contenedor del Texto con la animación flotante */
-        .text-container {
+        /* Contenedor del texto original recortado */
+        .text-image-container {
             position: relative;
-            text-align: center;
+            width: 90%;
+            max-width: 400px;
             z-index: 10;
+            /* Hace que el texto flote suavemente en el centro */
             animation: floatAnimation 4s ease-in-out infinite;
         }
 
-        /* Líneas decorativas naranjas al lado de "alto ahí" */
-        .decorations {
-            color: #f07b65;
-            font-size: 30px;
-            display: inline-block;
-            margin: 0 10px;
-            letter-spacing: -2px;
-        }
-
-        /* Estilo para: alto ahí / vienes con */
-        .text-dark {
-            color: #4a2810;
-            font-size: 48px;
-            font-weight: 800;
-            line-height: 1.1;
-            margin: 0;
-        }
-
-        /* Estilo para: exceso de / preciosura */
-        .text-pink {
-            color: #f07b65;
-            font-size: 58px;
-            font-weight: 800;
-            line-height: 1.1;
-            margin: 5px 0 0 0;
+        /* La imagen del texto original limpia y transparente sin el perro */
+        .text-image-container img {
+            width: 100%;
+            height: auto;
             display: block;
         }
 
-        /* Animación suave para que el texto flote en la pantalla */
+        /* Animación de flotación suave */
         @keyframes floatAnimation {
             0% {
                 transform: translateY(0px);
             }
             50% {
-                transform: translateY(-12px); /* Sube sutilmente */
+                transform: translateY(-12px); /* Sube un poco */
             }
             100% {
                 transform: translateY(0px);
             }
         }
 
-        /* Lienzo transparente para los corazones giratorios */
+        /* Lienzo transparente para los corazones pequeños giratorios */
         canvas {
             position: absolute;
             top: 0;
@@ -85,15 +62,8 @@
 
     <canvas id="heartCanvas"></canvas>
 
-    <div class="text-container">
-        <p class="text-dark">
-            <span class="decorations">\\\</span>alto ahí<span class="decorations">///</span><br>
-            vienes con
-        </p>
-        <span class="text-pink">
-            exceso de<br>
-            preciosura
-        </span>
+    <div class="text-image-container">
+        <img src="https://i.ibb.co/C31rKWhN/texto-solo.png" alt="Alto ahí vienes con exceso de preciosura">
     </div>
 
     <script>
@@ -108,7 +78,7 @@
         window.addEventListener('resize', resizeCanvas);
 
         const hearts = [];
-        const totalHearts = 25; // Cantidad de corazones pequeños flotando
+        const totalHearts = 25; // Cantidad de corazoncitos que dan vueltas
 
         class SpinningHeart {
             constructor() {
@@ -118,23 +88,23 @@
             }
 
             reset() {
-                this.size = Math.random() * 10 + 8;
+                this.size = Math.random() * 10 + 8; // Tamaños pequeños
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + this.size + Math.random() * 100;
-                this.speedY = -(Math.random() * 0.7 + 0.4);
+                this.speedY = -(Math.random() * 0.7 + 0.4); // Velocidad de subida suave
                 this.angle = Math.random() * Math.PI * 2;
-                this.spinSpeed = (Math.random() - 0.5) * 0.03; // Velocidad de rotación
+                this.spinSpeed = (Math.random() - 0.5) * 0.03; // Velocidad de giro
                 this.wobble = Math.random() * Math.PI;
                 this.wobbleSpeed = Math.random() * 0.02 + 0.01;
-                // Color idéntico al rosa de las letras
-                this.color = `rgba(240, 123, 101, ${Math.random() * 0.4 + 0.6})`;
+                // Color rosa exacto de los corazones de la imagen
+                this.color = `rgba(243, 137, 137, ${Math.random() * 0.4 + 0.6})`;
             }
 
             update() {
                 this.y += this.speedY;
                 this.angle += this.spinSpeed; // Hace que giren sobre su propio eje
                 this.wobble += this.wobbleSpeed;
-                this.x += Math.sin(this.wobble) * 0.3; // Movimiento ondulado
+                this.x += Math.sin(this.wobble) * 0.3; // Movimiento ondulado horizontal
 
                 if (this.y < -this.size) {
                     this.reset();
@@ -149,7 +119,7 @@
                 ctx.beginPath();
                 ctx.fillStyle = this.color;
                 
-                // Curva matemática del corazoncito
+                // Vector del corazón perfecto
                 ctx.moveTo(0, 0);
                 ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, -this.size / 3, -this.size, 0);
                 ctx.bezierCurveTo(-this.size, this.size / 2, -this.size / 3, this.size, 0, this.size * 1.3);
