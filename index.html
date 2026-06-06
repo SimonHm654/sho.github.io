@@ -14,39 +14,66 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            /* Tipografía redondeada y gruesa como el cartel */
+            font-family: 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-        /* Contenedor del texto original recortado */
-        .text-image-container {
+        /* Contenedor principal del mensaje */
+        .message-container {
             position: relative;
-            width: 90%;
-            max-width: 400px;
+            text-align: center;
             z-index: 10;
-            /* Hace que el texto flote suavemente en el centro */
+            padding: 20px;
+            /* Hace que todo el bloque de texto flote suavemente */
             animation: floatAnimation 4s ease-in-out infinite;
         }
 
-        /* La imagen del texto original limpia y transparente sin el perro */
-        .text-image-container img {
-            width: 100%;
-            height: auto;
-            display: block;
+        /* Líneas decorativas al lado de "alto ahí" */
+        .decorations {
+            color: #f07b65;
+            font-size: 28px;
+            display: inline-block;
+            margin: 0 8px;
+            vertical-align: middle;
         }
 
-        /* Animación de flotación suave */
+        /* Estilo para las letras de color café oscuro */
+        .text-dark {
+            color: #4a2810;
+            font-size: 46px;
+            font-weight: bold;
+            line-height: 1.2;
+            margin: 0;
+            text-transform: lowercase;
+        }
+
+        /* Estilo para las letras de color rosa/salmón */
+        .text-pink {
+            color: #f07b65;
+            font-size: 54px;
+            font-weight: bold;
+            line-height: 1.1;
+            margin: 8px 0 0 0;
+            display: block;
+            text-transform: lowercase;
+        }
+
+        /* Animación de vaivén flotante para el texto */
         @keyframes floatAnimation {
             0% {
                 transform: translateY(0px);
             }
             50% {
-                transform: translateY(-12px); /* Sube un poco */
+                transform: translateY(-15px); /* Sube un poco en el centro */
             }
             100% {
                 transform: translateY(0px);
             }
         }
 
-        /* Lienzo transparente para los corazones pequeños giratorios */
+        /* lienzo transparente para los corazones pequeños del fondo */
         canvas {
             position: absolute;
             top: 0;
@@ -62,8 +89,15 @@
 
     <canvas id="heartCanvas"></canvas>
 
-    <div class="text-image-container">
-        <img src="https://i.ibb.co/C31rKWhN/texto-solo.png" alt="Alto ahí vienes con exceso de preciosura">
+    <div class="message-container">
+        <p class="text-dark">
+            <span class="decorations">🏃✨</span>alto ahí<span class="decorations">✨🏃</span><br>
+            vienes con
+        </p>
+        <span class="text-pink">
+            exceso de<br>
+            preciosura
+        </span>
     </div>
 
     <script>
@@ -78,7 +112,7 @@
         window.addEventListener('resize', resizeCanvas);
 
         const hearts = [];
-        const totalHearts = 25; // Cantidad de corazoncitos que dan vueltas
+        const totalHearts = 30; // Cantidad de corazones flotando de fondo
 
         class SpinningHeart {
             constructor() {
@@ -88,23 +122,23 @@
             }
 
             reset() {
-                this.size = Math.random() * 10 + 8; // Tamaños pequeños
+                this.size = Math.random() * 10 + 8; // Tamaño pequeño idéntico a la imagen
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + this.size + Math.random() * 100;
-                this.speedY = -(Math.random() * 0.7 + 0.4); // Velocidad de subida suave
+                this.speedY = -(Math.random() * 0.8 + 0.4); // Velocidad al subir
                 this.angle = Math.random() * Math.PI * 2;
-                this.spinSpeed = (Math.random() - 0.5) * 0.03; // Velocidad de giro
+                this.spinSpeed = (Math.random() - 0.5) * 0.03; // Hace que giren sobre su eje
                 this.wobble = Math.random() * Math.PI;
                 this.wobbleSpeed = Math.random() * 0.02 + 0.01;
-                // Color rosa exacto de los corazones de la imagen
-                this.color = `rgba(243, 137, 137, ${Math.random() * 0.4 + 0.6})`;
+                // Mismo color rosa pastel de los corazones del cartel original
+                this.color = `rgba(240, 123, 101, ${Math.random() * 0.3 + 0.6})`;
             }
 
             update() {
                 this.y += this.speedY;
-                this.angle += this.spinSpeed; // Hace que giren sobre su propio eje
+                this.angle += this.spinSpeed; 
                 this.wobble += this.wobbleSpeed;
-                this.x += Math.sin(this.wobble) * 0.3; // Movimiento ondulado horizontal
+                this.x += Math.sin(this.wobble) * 0.3; // Vaivén de izquierda a derecha
 
                 if (this.y < -this.size) {
                     this.reset();
@@ -119,7 +153,7 @@
                 ctx.beginPath();
                 ctx.fillStyle = this.color;
                 
-                // Vector del corazón perfecto
+                // Generador del trazado del corazón clásico
                 ctx.moveTo(0, 0);
                 ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, -this.size / 3, -this.size, 0);
                 ctx.bezierCurveTo(-this.size, this.size / 2, -this.size / 3, this.size, 0, this.size * 1.3);
