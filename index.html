@@ -6,7 +6,7 @@
     <title>Para Alguien Especial</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        /* Fondo crema romántico */
+        /* Fondo crema romántico e infinito */
         body {
             margin: 0;
             background-color: #fceade;
@@ -31,7 +31,7 @@
             align-items: center;
             justify-content: center;
             width: 90%;
-            max-width: 450px;
+            max-width: 420px;
         }
 
         /* Recuadro de los poemas iniciales */
@@ -105,6 +105,7 @@
             box-shadow: 0 8px 20px rgba(240, 123, 101, 0.3);
             transition: all 0.2s ease;
             outline: none;
+            padding: 0;
         }
 
         .arrow-btn:hover {
@@ -113,38 +114,20 @@
             background-color: #f28b77;
         }
 
-        /* Contenedor especial para la sorpresa final */
+        /* Contenedor limpio para la flor final */
         #roseContainer {
             opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 1s ease, transform 1s ease;
+            transform: scale(0.85);
+            transition: opacity 1.2s ease, transform 1.2s ease;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             z-index: 15;
-            width: 100%;
         }
 
         #roseContainer.show {
             opacity: 1;
             transform: scale(1);
-        }
-
-        /* Texto final romántico arriba de la rosa */
-        .final-message {
-            color: #4a2810;
-            font-size: 30px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: -15px;
-            line-height: 1.3;
-        }
-
-        .final-message span {
-            color: #d11790;
-            display: block;
-            font-size: 36px;
-            margin-top: 5px;
         }
 
         @keyframes cardFloat {
@@ -153,7 +136,7 @@
             100% { transform: translateY(0px); }
         }
 
-        /* Lienzo general de fondo e interactivos */
+        /* Lienzos generales */
         canvas {
             position: absolute;
             top: 0;
@@ -164,7 +147,14 @@
         }
 
         #heartCanvas { z-index: 5; }
-        #roseCanvas { position: relative; width: 400px; height: 400px; z-index: 10; margin-top: 10px; }
+        
+        /* Tamaño óptimo para apreciar la flor de loto en el centro */
+        #roseCanvas { 
+            position: relative; 
+            width: 450px; 
+            height: 450px; 
+            z-index: 12; 
+        }
     </style>
 </head>
 <body>
@@ -186,13 +176,12 @@
         <button class="arrow-btn" id="nextBtn" onclick="changePoem()">➔</button>
 
         <div id="roseContainer" class="hidden">
-            <h2 class="final-message">Te lo dije en código... <span>¡Aquí está tu flor! 🌸</span></h2>
             <canvas id="roseCanvas"></canvas>
         </div>
     </div>
 
     <script>
-        // --- POEMAS CON ORTOGRAFÍA REVISADA ---
+        // --- POEMAS CON ORTOGRAFÍA IMPECABLE ---
         const poems = [
             {
                 dark: "<span class='decorations'>✨</span>¡Alto ahí!<span class='decorations'>✨</span><br>Vienes con",
@@ -228,7 +217,7 @@
                     roseContainer.classList.remove('hidden');
                     setTimeout(() => {
                         roseContainer.classList.add('show');
-                        initRose(); 
+                        initLotusFlower(); // Inicializa el renderizado limpio de la flor
                     }, 50);
                     return;
                 }
@@ -303,83 +292,112 @@
         for (let i = 0; i < 35; i++) hearts.push(new SparklingHeart());
 
 
-        // --- PROYECCIÓN MATEMÁTICA REAL DE LA FLOR DE LOTO EN 3D ---
+        // --- GEOMETRÍA TRIDIMENSIONAL LIMPIA Y REDEFINIDA DE LA FLOR DE LOTO ---
         const roseCanvas = document.getElementById('roseCanvas');
         const rCtx = roseCanvas.getContext('2d');
-        roseCanvas.width = 400;
-        roseCanvas.height = 400;
+        roseCanvas.width = 500;
+        roseCanvas.height = 500;
 
-        let rotationAngle = 0;
+        let globalRotation = 0;
 
-        function initRose() {
-            function drawRoseFrame() {
+        function initLotusFlower() {
+            function drawFrame() {
                 rCtx.clearRect(0, 0, roseCanvas.width, roseCanvas.height);
                 
                 let cx = roseCanvas.width / 2;
-                let cy = roseCanvas.height / 2 + 30;
-                rotationAngle += 0.01; // Velocidad de rotación lenta y elegante
+                let cy = roseCanvas.height / 2 + 20;
+                globalRotation += 0.008; // Giro continuo, sutil y elegante
 
-                // Algoritmo de mapeo de pétalos abiertos superpuestos
-                for (let r = 0.1; r < 35; r += 0.5) {
-                    for (let theta = 0; theta < 360; theta += 2.5) {
-                        let radTheta = (theta * Math.PI) / 180;
-                        let radR = r / 20;
+                // Array para almacenar y ordenar puntos por profundidad (Z-buffering nativo)
+                let pointsGroup = [];
 
-                        // Ecuación modificada para aplanar y abrir la flor en forma de loto espacioso
-                        let phi = (Math.PI / 2) * Math.sin(radR * Math.PI * 0.5); 
-                        // Simulación de las ondulaciones de las capas de pétalos individuales
-                        let petalLayers = Math.sin(6 * radTheta) * 0.12 + Math.cos(3 * radTheta) * 0.05;
-                        let u = 1.2 * (radR + petalLayers);
+                // 1. GENERACIÓN GEOMÉTRICA DE CAPAS DE PÉTALOS (De adentro hacia afuera)
+                // Capas: 0 = Centro pistilo, 1-5 = Filas de pétalos abiertos superpuestos
+                for (let layer = 0; layer <= 5; layer++) {
+                    let totalPetals = layer === 0 ? 1 : 6 + layer * 4; // Más pétalos en capas externas
+                    let layerRadius = layer * 28;
 
-                        // Coordenadas tridimensionales esféricas abiertas
-                        let x = r * Math.sin(phi) * Math.cos(radTheta) * u * 4.2;
-                        let y = r * Math.sin(phi) * Math.sin(radTheta) * u * 4.2;
-                        // Ajuste del eje Z para deprimir el centro y ensanchar la copa de la flor
-                        let z = (35 - r) * Math.cos(phi) * 4.0 - (Math.pow(r, 1.2) * 0.5);
-
-                        // Rotación en el espacio 3D (Eje X ligeramente inclinado y rotación en Y)
-                        let tiltAngle = 0.6; // Ángulo de inclinación para apreciarla desde arriba
-                        let tempY = y * Math.cos(tiltAngle) - z * Math.sin(tiltAngle);
-                        let tempZ = y * Math.sin(tiltAngle) + z * Math.cos(tiltAngle);
-
-                        let rotX = x * Math.cos(rotationAngle) - tempY * Math.sin(rotationAngle);
-                        let rotY = x * Math.sin(rotationAngle) + tempY * Math.cos(rotationAngle);
-
-                        // Proyección en perspectiva de profundidad
-                        let perspective = 400 / (400 + tempZ);
-                        let projX = cx + rotX * perspective;
-                        let projY = cy + rotY * perspective;
-
-                        // DISTRIBUCIÓN DE COLOR IDÉNTICA A LA FLOR REAL
-                        rCtx.beginPath();
+                    for (let p = 0; p < totalPetals; p++) {
+                        let baseAngle = (p * (360 / totalPetals) * Math.PI) / 180;
                         
-                        if (r < 5) {
-                            // 1. Núcleo central: Pistilo amarillo brillante
-                            rCtx.fillStyle = `rgba(235, 230, 40, ${0.85 - r*0.05})`;
-                        } else if (r >= 5 && r < 14) {
-                            // 2. Transición interna: Degradado de blanco sedoso a rosa claro
-                            let t = (r - 5) / 9;
-                            let red = 245 + t * 10;
-                            let green = 240 - t * 120;
-                            let blue = 245 - t * 50;
-                            rCtx.fillStyle = `rgba(${red}, ${green}, ${blue}, 0.9)`;
-                        } else {
-                            // 3. Pétalos externos: Magenta / Violeta encendido e intenso
-                            let t = (r - 14) / 21;
-                            let red = 210 - t * 40;   // Se vuelve más profundo
-                            let green = 30 - t * 20;  // Mantiene la pureza
-                            let blue = 170 + t * 45;  // Realza el tono violeta del borde
-                            rCtx.fillStyle = `rgba(${red}, ${green}, ${blue}, 0.85)`;
-                        }
+                        // Densidad interna de cada pétalo para rellenarlo de color sólido impecable
+                        for (let lengthFactor = 0.1; lengthFactor <= 1.0; lengthFactor += 0.08) {
+                            let currentRadius = layerRadius * lengthFactor;
+                            
+                            // Ancho de los pétalos (abiertos y curvos como el loto original)
+                            let widthSpread = layer === 0 ? 0 : (1.0 - lengthFactor) * 0.45;
+                            
+                            for (let angleOffset = -widthSpread; angleOffset <= widthSpread; angleOffset += 0.05) {
+                                let theta = baseAngle + angleOffset;
+                                
+                                // Elevación tridimensional del pétalo (Copa cóncava perfecta)
+                                let petalCurve = Math.sin(lengthFactor * Math.PI * 0.5);
+                                let x = currentRadius * Math.cos(theta);
+                                let y = currentRadius * Math.sin(theta);
+                                let z = (layer * 12) - (petalCurve * 35) + (lengthFactor * 15);
 
-                        // Dibujar cada partícula matemática de los pétalos
-                        rCtx.arc(projX, projY, Math.max(0.6, 2.0 * perspective), 0, Math.PI * 2);
-                        rCtx.fill();
+                                // Inclinación de cámara realista (Vista superior semi-inclinada)
+                                let tilt = 0.75; 
+                                let tempY = y * Math.cos(tilt) - z * Math.sin(tilt);
+                                let tempZ = y * Math.sin(tilt) + z * Math.cos(tilt);
+
+                                // Rotación global interactiva sobre el eje central
+                                let rotX = x * Math.cos(globalRotation) - tempY * Math.sin(globalRotation);
+                                let rotY = x * Math.sin(globalRotation) + tempY * Math.cos(globalRotation);
+
+                                // Cálculo de perspectiva de lente
+                                let perspective = 450 / (450 + tempZ);
+                                let projX = cx + rotX * perspective;
+                                let projY = cy + rotY * perspective;
+
+                                // ASIGNACIÓN MATRICIAL DE COLORES (Idéntica a la imagen de referencia)
+                                let colorString = "";
+                                if (layer === 0) {
+                                    // Centro absoluto: Pistilo amarillo vibrante
+                                    colorString = `rgba(243, 226, 45, 0.95)`;
+                                } else {
+                                    // Pétalos degradados: Puntas magenta, base blanca pura
+                                    if (lengthFactor > 0.7) {
+                                        // Extremo exterior del pétalo: Magenta/Violeta encendido e intenso
+                                        let edgeTone = (lengthFactor - 0.7) / 0.3;
+                                        colorString = `rgba(${205 + edgeTone * 30}, 20, ${165 + edgeTone * 40}, 0.9)`;
+                                    } else if (lengthFactor > 0.35) {
+                                        // Transición: Rosa difuminado suave
+                                        let midTone = (lengthFactor - 0.35) / 0.35;
+                                        colorString = `rgba(245, ${150 - midTone * 100}, ${220 - midTone * 40}, 0.85)`;
+                                    } else {
+                                        // Base interna del pétalo: Blanco puro/crema sedoso
+                                        colorString = `rgba(255, 252, 255, 0.9)`;
+                                    }
+                                }
+
+                                // Guardamos el punto con su profundidad Z para ordenarlos
+                                pointsGroup.push({
+                                    x: projX,
+                                    y: projY,
+                                    z: tempZ,
+                                    size: Math.max(0.8, (layer === 0 ? 2.5 : 4.0) * perspective),
+                                    color: colorString
+                                });
+                            }
+                        }
                     }
                 }
-                requestAnimationFrame(drawRoseFrame);
+
+                // 2. ORDENAMIENTO DE PROFUNDIDAD (Pinta de atrás hacia adelante para evitar transparencias rotas)
+                pointsGroup.sort((pointA, pointB) => pointB.z - pointA.z);
+
+                // 3. RENDERIZADO NETO EN PANTALLA
+                pointsGroup.forEach(point => {
+                    rCtx.beginPath();
+                    rCtx.fillStyle = point.color;
+                    rCtx.arc(point.x, point.y, point.size, 0, Math.PI * 2);
+                    rCtx.fill();
+                });
+
+                requestAnimationFrame(drawFrame);
             }
-            drawRoseFrame();
+            drawFrame();
         }
 
         // Bucle global de animación de fondo
