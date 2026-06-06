@@ -6,7 +6,7 @@
     <title>Para Alguien Especial</title>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        /* Fondo crema romántico e infinito */
+        /* Fondo crema romántico */
         body {
             margin: 0;
             background-color: #fceade;
@@ -34,31 +34,34 @@
             max-width: 420px;
         }
 
-        /* Recuadro central mejorado (Estilo carta de amor) */
+        /* Recuadro de los poemas iniciales */
         .poem-card {
-            background-color: rgba(255, 255, 255, 0.94); /* Blanco suave nítido */
+            background-color: rgba(255, 255, 255, 0.94);
             padding: 40px 35px;
             border-radius: 32px;
             box-shadow: 0 15px 35px rgba(240, 123, 101, 0.12);
             border: 2px solid rgba(240, 123, 101, 0.15);
             width: 100%;
             box-sizing: border-box;
-            min-height: 280px; /* Evita saltos bruscos de tamaño */
+            min-height: 280px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             animation: cardFloat 4.5s ease-in-out infinite;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: opacity 0.4s ease, transform 0.4s ease;
         }
 
-        /* Transición de desvanecimiento entre poemas */
         .poem-card.fade {
             opacity: 0;
-            transform: scale(0.97) translateY(5px);
+            transform: scale(0.95) translateY(10px);
         }
 
-        /* Adornos estéticos de destellos */
+        /* Ocultar elementos de forma limpia */
+        .hidden {
+            display: none !important;
+        }
+
         .decorations {
             color: #f07b65;
             font-size: 28px;
@@ -67,7 +70,6 @@
             vertical-align: middle;
         }
 
-        /* Texto café oscuro pulido */
         .text-dark {
             color: #4a2810;
             font-size: 38px;
@@ -76,7 +78,6 @@
             margin: 0;
         }
 
-        /* Texto rosa salmón destacado */
         .text-pink {
             color: #f07b65;
             font-size: 48px;
@@ -86,7 +87,7 @@
             display: block;
         }
 
-        /* BOTÓN SOLO CON LA FLECHA */
+        /* Botón solo con flecha limpia */
         .arrow-btn {
             margin-top: 25px;
             background-color: #f07b65;
@@ -104,29 +105,54 @@
             box-shadow: 0 8px 20px rgba(240, 123, 101, 0.3);
             transition: all 0.2s ease;
             outline: none;
-            padding: 0;
         }
 
-        /* Efectos dinámicos del botón */
         .arrow-btn:hover {
             transform: translateY(-3px) scale(1.05);
             box-shadow: 0 12px 24px rgba(240, 123, 101, 0.4);
             background-color: #f28b77;
         }
 
-        .arrow-btn:active {
-            transform: translateY(1px) scale(0.98);
-            box-shadow: 0 4px 10px rgba(240, 123, 101, 0.2);
+        /* Contenedor especial para la sorpresa final */
+        #roseContainer {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 1s ease, transform 1s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 15;
         }
 
-        /* Animación de flotación de la tarjeta */
+        #roseContainer.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Texto final romántico arriba de la rosa */
+        .final-message {
+            color: #4a2810;
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: -10px;
+            line-height: 1.3;
+        }
+
+        .final-message span {
+            color: #f07b65;
+            display: block;
+            font-size: 38px;
+            margin-top: 5px;
+        }
+
         @keyframes cardFloat {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
 
-        /* Lienzo trasero para los corazones escarchados giratorios */
+        /* Lienzo general de fondo e interactivos */
         canvas {
             position: absolute;
             top: 0;
@@ -134,8 +160,10 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 5;
         }
+
+        #heartCanvas { z-index: 5; }
+        #roseCanvas { position: relative; width: 350px; height: 350px; z-index: 10; }
     </style>
 </head>
 <body>
@@ -155,10 +183,15 @@
         </div>
 
         <button class="arrow-btn" id="nextBtn" onclick="changePoem()">➔</button>
+
+        <div id="roseContainer" class="hidden">
+            <h2 class="final-message">Te lo dije en código... <span>¡Y aquí está tu rosa! 🌹</span></h2>
+            <canvas id="roseCanvas"></canvas>
+        </div>
     </div>
 
     <script>
-        // --- POEMAS CON ORTOGRAFÍA REVISADA Y CORREGIDA ---
+        // --- POEMAS CON ORTOGRAFÍA IMPECABLE ---
         const poems = [
             {
                 dark: "<span class='decorations'>✨</span>¡Alto ahí!<span class='decorations'>✨</span><br>Vienes con",
@@ -180,12 +213,27 @@
 
         let currentIndex = 0;
         const poemCard = document.getElementById('poemCard');
+        const nextBtn = document.getElementById('nextBtn');
+        const roseContainer = document.getElementById('roseContainer');
 
         function changePoem() {
             poemCard.classList.add('fade');
 
             setTimeout(() => {
-                currentIndex = (currentIndex + 1) % poems.length;
+                // Si ya pasamos todos los poemas, disparamos el final de la rosa
+                if (currentIndex === poems.length - 1) {
+                    poemCard.classList.add('hidden');
+                    nextBtn.classList.add('hidden');
+                    
+                    roseContainer.classList.remove('hidden');
+                    setTimeout(() => {
+                        roseContainer.classList.add('show');
+                        initRose(); // Empieza a renderizar la rosa matemática
+                    }, 50);
+                    return;
+                }
+
+                currentIndex++;
                 
                 poemCard.innerHTML = `
                     <p class="text-dark">${poems[currentIndex].dark}</p>
@@ -197,7 +245,7 @@
         }
 
 
-        // --- EFECTO DE CORAZONES FLOTANTES, GIRATORIOS Y ESCARCHADOS ---
+        // --- SISTEMA DE CORAZONES FLOTANTES, GIRATORIOS Y ESCARCHADOS ---
         const canvas = document.getElementById('heartCanvas');
         const ctx = canvas.getContext('2d');
 
@@ -209,87 +257,121 @@
         window.addEventListener('resize', resizeCanvas);
 
         const hearts = [];
-        const totalHearts = 35; 
-
         class SparklingHeart {
             constructor() {
                 this.reset();
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
             }
-
             reset() {
                 this.size = Math.random() * 10 + 8;
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + this.size + Math.random() * 100;
-                this.speedY = -(Math.random() * 0.5 + 0.35); // Velocidad al flotar hacia arriba
-                this.angle = Math.random() * Math.PI * 2; // Ángulo inicial
-                this.spinSpeed = (Math.random() * 0.02 + 0.01) * (Math.random() < 0.5 ? 1 : -1); // Hace que giren constantemente
+                this.speedY = -(Math.random() * 0.5 + 0.35);
+                this.angle = Math.random() * Math.PI * 2;
+                this.spinSpeed = (Math.random() * 0.02 + 0.01) * (Math.random() < 0.5 ? 1 : -1);
                 this.wobble = Math.random() * Math.PI;
                 this.wobbleSpeed = Math.random() * 0.015 + 0.01;
-                
-                // Color base rosa salmón romántico
-                this.baseColor = { r: 240, g: 123, b: 101 };
                 this.alpha = Math.random() * 0.35 + 0.6;
-                // Brillo de escarcha individual
                 this.sparkleSize = Math.random() * 10 + 10;
             }
-
             update() {
                 this.y += this.speedY;
-                this.angle += this.spinSpeed; // Giro continuo sobre su eje
+                this.angle += this.spinSpeed;
                 this.wobble += this.wobbleSpeed;
-                this.x += Math.sin(this.wobble) * 0.25; // Vaivén de balanceo
-
-                if (this.y < -this.size) {
-                    this.reset();
-                }
+                this.x += Math.sin(this.wobble) * 0.25;
+                if (this.y < -this.size) this.reset();
             }
-
             draw() {
                 ctx.save();
                 ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle); // Aplica el giro físico en pantalla
-
-                // CONFIGURACIÓN DEL EFECTO ESCARCHADO (Brillo luminoso en los bordes)
+                ctx.rotate(this.angle);
                 ctx.shadowBlur = this.sparkleSize;
                 ctx.shadowColor = `rgba(255, 190, 180, ${this.alpha})`;
-                
                 ctx.beginPath();
-                // Creamos un degradado interno para simular destellos de purpurina
                 let gradient = ctx.createRadialGradient(0, 0, 1, 0, 0, this.size);
-                gradient.addColorStop(0, `rgba(255, 210, 200, ${this.alpha})`); // Centro brillante
-                gradient.addColorStop(0.8, `rgba(${this.baseColor.r}, ${this.baseColor.g}, ${this.baseColor.b}, ${this.alpha})`);
+                gradient.addColorStop(0, `rgba(255, 210, 200, ${this.alpha})`);
+                gradient.addColorStop(0.8, `rgba(240, 123, 101, ${this.alpha})`);
                 ctx.fillStyle = gradient;
-                
-                // Geometría clásica del corazón
                 ctx.moveTo(0, 0);
                 ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, -this.size / 3, -this.size, 0);
                 ctx.bezierCurveTo(-this.size, this.size / 2, -this.size / 3, this.size, 0, this.size * 1.35);
                 ctx.bezierCurveTo(this.size / 3, this.size, this.size, this.size / 2, this.size, 0);
                 ctx.bezierCurveTo(this.size, -this.size / 3, this.size / 2, -this.size / 2, 0, 0);
-                
                 ctx.fill();
                 ctx.restore();
             }
         }
+        for (let i = 0; i < 35; i++) hearts.push(new SparklingHeart());
 
-        for (let i = 0; i < totalHearts; i++) {
-            hearts.push(new SparklingHeart());
+
+        // --- TRADUCCIÓN DEL CÓDIGO MATEMÁTICO DE LA ROSA 3D (DE PYTHON A CANVAS 2D/3D) ---
+        // Adapta las funciones paramétricas de la flor tridimensional
+        const roseCanvas = document.getElementById('roseCanvas');
+        const rCtx = roseCanvas.getContext('2d');
+        roseCanvas.width = 350;
+        roseCanvas.height = 350;
+
+        let rotationAngle = 0;
+
+        function initRose() {
+            function drawRoseFrame() {
+                rCtx.clearRect(0, 0, roseCanvas.width, roseCanvas.height);
+                
+                let cx = roseCanvas.width / 2;
+                let cy = roseCanvas.height / 2 + 20;
+                rotationAngle += 0.015; // Velocidad de giro automático de la rosa
+
+                // Proyección de puntos basada en la estructura matemática de pétalos de Python
+                for (let r = 0; r < 30; r += 0.4) {
+                    for (let theta = 0; theta < 360; theta += 4) {
+                        let radTheta = (theta * Math.PI) / 180;
+                        let radR = r / 15;
+                        
+                        // Ecuación matemática de la forma de los pétalos de flor
+                        let phi = (Math.PI / 2) * Math.exp(-radTheta / (8 * Math.PI));
+                        let p = 1.65 * Math.sin(radR * 1.65);
+                        let u = 0.5 + Math.abs(Math.sin(p * radTheta)) / 2;
+                        
+                        // Coordenadas espaciales tridimensionales de la rosa (X, Y, Z)
+                        let x = r * Math.sin(phi) * Math.cos(radTheta) * u * 4.5;
+                        let y = r * Math.sin(phi) * Math.sin(radTheta) * u * 4.5;
+                        let z = r * Math.cos(phi) * 4.5 - 50;
+
+                        // Rotación tridimensional de la rosa en los ejes
+                        let rotX = x * Math.cos(rotationAngle) - y * Math.sin(rotationAngle);
+                        let rotY = x * Math.sin(rotationAngle) + y * Math.cos(rotationAngle);
+                        
+                        // Proyección en perspectiva simple de los pétalos
+                        let perspective = 300 / (300 + z);
+                        let projX = cx + rotX * perspective;
+                        let projY = cy + rotY * perspective - z * 0.3;
+
+                        // Paleta de colores degradados rosa, magenta y loto de tu captura
+                        rCtx.beginPath();
+                        let distanceFactor = r / 30;
+                        rCtx.fillStyle = `rgba(${220 + distanceFactor * 35}, ${50 + distanceFactor * 100}, ${120 + distanceFactor * 40}, 0.85)`;
+                        
+                        // Efecto luminoso en cada pétalo programado
+                        rCtx.arc(projX, projY, Math.max(0.5, 1.8 * perspective), 0, Math.PI * 2);
+                        rCtx.fill();
+                    }
+                }
+                requestAnimationFrame(drawRoseFrame);
+            }
+            drawRoseFrame();
         }
 
-        function animate() {
+        // Bucle global de animación de fondo
+        function globalAnimate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
             hearts.forEach(heart => {
                 heart.update();
                 heart.draw();
             });
-
-            requestAnimationFrame(animate);
+            requestAnimationFrame(globalAnimate);
         }
-
-        animate();
+        globalAnimate();
     </script>
 </body>
 </html>
