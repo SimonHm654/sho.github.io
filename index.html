@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alto Ahí - Exceso de Preciosura</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        /* Fondo crema idéntico al original */
+        /* Fondo color crema romántico */
         body {
             margin: 0;
             background-color: #fceade;
@@ -14,199 +15,79 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif;
+            font-family: 'Fredoka', sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
         }
 
-        /* Contenedor Principal */
-        .main-container {
+        /* La carta o tarjeta romántica central */
+        .love-card {
             position: relative;
+            background-color: #ffffff;
+            padding: 45px 50px;
+            border-radius: 30px;
+            /* Sombra suave y difuminada que la hace resaltar con delicadeza */
+            box-shadow: 0 15px 35px rgba(240, 123, 101, 0.15);
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             z-index: 10;
+            max-width: 360px;
+            width: 85%;
+            border: 2px solid rgba(240, 123, 101, 0.1);
+            /* Animación de flotación suave y romántica */
+            animation: cardFloat 4s ease-in-out infinite;
         }
 
-        /* TEXTO SUPERIOR */
-        .text-container {
-            margin-bottom: -10px;
-            line-height: 1.2;
+        /* Líneas decorativas a los lados del texto */
+        .decorations {
+            color: #f07b65;
+            font-size: 26px;
+            display: inline-block;
+            margin: 0 8px;
+            opacity: 0.8;
         }
+
+        /* Estilo para las dos primeras líneas (Café chocolate oscuro) */
         .text-dark {
             color: #4a2810;
-            font-size: 38px;
-            font-weight: bold;
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin: 0;
         }
+
+        /* Estilo destacado para la frase de amor (Rosa pastel encendido) */
         .text-pink {
             color: #f07b65;
-            font-size: 46px;
-            font-weight: bold;
+            font-size: 50px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin: 12px 0 0 0;
             display: block;
-            margin-top: 5px;
         }
 
-        /* EL PERRITO POLICÍA (Hecho con CSS Puro) */
-        .dog-cop {
-            position: relative;
-            width: 280px;
-            height: 300px;
-            margin-top: 20px;
+        /* Mini corazón decorativo estático dentro de la tarjeta */
+        .card-heart {
+            font-size: 24px;
+            margin-top: 15px;
+            display: inline-block;
+            animation: pulse 1.5s ease-in-out infinite;
         }
 
-        /* Cabeza */
-        .head {
-            position: absolute;
-            bottom: 40px;
-            left: 30px;
-            width: 220px;
-            height: 180px;
-            background-color: #f0c584;
-            border-radius: 110px / 90px;
-            border: 4px solid #3d2314;
-            z-index: 2;
+        /* Animación de flotación de la tarjeta */
+        @keyframes cardFloat {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
 
-        /* Orejas */
-        .ear {
-            position: absolute;
-            top: 60px;
-            width: 75px;
-            height: 130px;
-            background-color: #f0c584;
-            border: 4px solid #3d2314;
-            border-radius: 50px;
-            z-index: 1;
-        }
-        .ear.left { left: 5px; transform: rotate(-15deg); }
-        .ear.right { right: 5px; transform: rotate(15deg); }
-
-        /* Ojos grandes y tiernos */
-        .eye {
-            position: absolute;
-            top: 65px;
-            width: 42px;
-            height: 42px;
-            background-color: #21130d;
-            border-radius: 50%;
-            z-index: 3;
-        }
-        .eye.left { left: 45px; }
-        .eye.right { right: 45px; }
-        /* Brillo de los ojos */
-        .eye::after {
-            content: '';
-            position: absolute;
-            top: 6px;
-            left: 10px;
-            width: 14px;
-            height: 14px;
-            background-color: #fff;
-            border-radius: 50%;
+        /* Animación de latido para el pequeño corazón de la tarjeta */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
         }
 
-        /* Hocico y Nariz */
-        .snout {
-            position: absolute;
-            top: 100px;
-            left: 85px;
-            width: 50px;
-            height: 35px;
-            background-color: #fcdfa2;
-            border-radius: 50%;
-            z-index: 3;
-        }
-        .nose {
-            position: absolute;
-            top: 5px;
-            left: 13px;
-            width: 24px;
-            height: 16px;
-            background-color: #21130d;
-            border-radius: 12px 12px 8px 8px;
-        }
-
-        /* Gorra de Policía */
-        .cap {
-            position: absolute;
-            top: -15px;
-            left: 20px;
-            width: 240px;
-            height: 95px;
-            background-color: #263b5c;
-            border: 4px solid #3d2314;
-            border-radius: 120px 120px 40px 40px;
-            z-index: 4;
-        }
-        .cap-visor {
-            position: absolute;
-            bottom: -12px;
-            left: 30px;
-            width: 180px;
-            height: 25px;
-            background-color: #1a1e29;
-            border: 4px solid #3d2314;
-            border-radius: 0 0 40px 40px;
-        }
-        /* Placa de la gorra */
-        .badge {
-            position: absolute;
-            top: 20px;
-            left: 95px;
-            width: 46px;
-            height: 46px;
-            background-color: #f7be43;
-            border: 3px solid #3d2314;
-            border-radius: 50% 50% 40% 40%;
-        }
-        /* Huella digital en la placa */
-        .badge::before {
-            content: '🐾';
-            position: absolute;
-            top: 6px;
-            left: 7px;
-            font-size: 20px;
-        }
-
-        /* Camisa de Uniforme */
-        .uniform {
-            position: absolute;
-            bottom: -20px;
-            left: 55px;
-            width: 170px;
-            height: 90px;
-            background-color: #263b5c;
-            border: 4px solid #3d2314;
-            border-radius: 30px 30px 0 0;
-            z-index: 1;
-        }
-        .tie {
-            position: absolute;
-            top: 20px;
-            left: 73px;
-            width: 24px;
-            height: 60px;
-            background-color: #1a1e29;
-            border-radius: 4px;
-        }
-
-        /* Patita levantada diciendo ALTO */
-        .paw-stop {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            width: 65px;
-            height: 65px;
-            background-color: #f0c584;
-            border: 4px solid #3d2314;
-            border-radius: 50%;
-            z-index: 5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 32px;
-        }
-
-        /* CANVAS DE LOS CORAZONES */
+        /* Lienzo de fondo para los corazones que dan vueltas */
         canvas {
             position: absolute;
             top: 0;
@@ -222,31 +103,16 @@
 
     <canvas id="heartCanvas"></canvas>
 
-    <div class="main-container">
-        <div class="text-container">
-            <span class="text-dark">alto ahí<br>vienes con</span>
-            <span class="text-pink">exceso de<br>preciosura</span>
-        </div>
-
-        <div class="dog-cop">
-            <div class="cap">
-                <div class="badge"></div>
-                <div class="cap-visor"></div>
-            </div>
-            <div class="ear left"></div>
-            <div class="ear right"></div>
-            <div class="head">
-                <div class="eye left"></div>
-                <div class="eye right"></div>
-                <div class="snout">
-                    <div class="nose"></div>
-                </div>
-            </div>
-            <div class="uniform">
-                <div class="tie"></div>
-            </div>
-            <div class="paw-stop">🐾</div>
-        </div>
+    <div class="love-card">
+        <p class="text-dark">
+            <span class="decorations">✨</span>alto ahí<span class="decorations">✨</span><br>
+            vienes con
+        </p>
+        <span class="text-pink">
+            exceso de<br>
+            preciosura
+        </span>
+        <div class="card-heart">💝</div>
     </div>
 
     <script>
@@ -261,7 +127,7 @@
         window.addEventListener('resize', resizeCanvas);
 
         const hearts = [];
-        const totalHearts = 20;
+        const totalHearts = 35; // Densidad perfecta de corazones flotantes
 
         class SpinningHeart {
             constructor() {
@@ -271,59 +137,9 @@
             }
 
             reset() {
-                this.size = Math.random() * 10 + 8;
+                this.size = Math.random() * 11 + 9; // Tamaños variados y estéticos
                 this.x = Math.random() * canvas.width;
                 this.y = canvas.height + this.size + Math.random() * 100;
-                this.speedY = -(Math.random() * 0.8 + 0.4);
+                this.speedY = -(Math.random() * 0.6 + 0.35); // Movimiento de ascenso lento y tierno
                 this.angle = Math.random() * Math.PI * 2;
-                this.spinSpeed = (Math.random() - 0.5) * 0.04; // Hace que giren
-                this.wobble = Math.random() * Math.PI;
-                this.wobbleSpeed = Math.random() * 0.02 + 0.01;
-                this.color = `rgba(240, 123, 101, ${Math.random() * 0.3 + 0.6})`; // Color rosa de la imagen
-            }
-
-            update() {
-                this.y += this.speedY;
-                this.angle += this.spinSpeed;
-                this.wobble += this.wobbleSpeed;
-                this.x += Math.sin(this.wobble) * 0.4;
-
-                if (this.y < -this.size) {
-                    this.reset();
-                }
-            }
-
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle);
-
-                ctx.beginPath();
-                ctx.fillStyle = this.color;
-                ctx.moveTo(0, 0);
-                ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, -this.size / 3, -this.size, 0);
-                ctx.bezierCurveTo(-this.size, this.size / 2, -this.size / 3, this.size, 0, this.size * 1.3);
-                ctx.bezierCurveTo(this.size / 3, this.size, this.size, this.size / 2, this.size, 0);
-                ctx.bezierCurveTo(this.size, -this.size / 3, this.size / 2, -this.size / 2, 0, 0);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        for (let i = 0; i < totalHearts; i++) {
-            hearts.push(new SpinningHeart());
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            hearts.forEach(heart => {
-                heart.update();
-                heart.draw();
-            });
-            requestAnimationFrame(animate);
-        }
-
-        animate();
-    </script>
-</body>
-</html>
+                this.spinSpeed = (Math.random() - 0.5) * 0.025; // Giro
