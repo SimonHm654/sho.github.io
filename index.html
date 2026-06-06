@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Para Alguien Especial</title>
+    <!-- Fuente premium redondeada y dulce -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        /* Fondo crema romántico e infinito */
+        /* Fondo inicial crema romántico con transición fluida al modo oscuro */
         body {
             margin: 0;
             background-color: #fceade;
@@ -19,6 +20,12 @@
             font-family: 'Fredoka', sans-serif;
             -webkit-user-select: none;
             user-select: none;
+            transition: background-color 2s ease; /* Transición suave de color de fondo */
+        }
+
+        /* Clase que se activa al final para volver el fondo oscuro y hermoso */
+        body.dark-mode {
+            background-color: #0b0914;
         }
 
         /* Contenedor de la Experiencia */
@@ -118,7 +125,7 @@
         #roseContainer {
             opacity: 0;
             transform: scale(0.85);
-            transition: opacity 1.2s ease, transform 1.2s ease;
+            transition: opacity 1.5s ease, transform 1.5s ease;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -136,7 +143,7 @@
             100% { transform: translateY(0px); }
         }
 
-        /* Canvas de fondo y de la flor */
+        /* Canvas de fondo y efectos */
         canvas {
             position: absolute;
             top: 0;
@@ -148,20 +155,35 @@
 
         #heartCanvas { z-index: 5; }
         
-        /* Contenedor responsivo adaptado para tu hermosa flor */
+        /* Canvas intermedio para el aura resplandeciente trasera */
+        #glowCanvas {
+            z-index: 8;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+        #glowCanvas.show {
+            opacity: 1;
+        }
+        
+        /* Contenedor adaptado para tu hermosa flor */
         #roseCanvas { 
             position: relative; 
-            width: 450px; 
-            height: 450px; 
+            width: 460px; 
+            height: 460px; 
             z-index: 12; 
         }
     </style>
 </head>
 <body>
 
+    <!-- Canvas trasero: Corazones escarchados flotantes y giratorios -->
     <canvas id="heartCanvas"></canvas>
 
+    <!-- Canvas intermedio: Resplandor mágico detrás de la flor -->
+    <canvas id="glowCanvas"></canvas>
+
     <div class="romantic-wrapper">
+        <!-- Tarjeta de poemas iniciales -->
         <div class="poem-card" id="poemCard">
             <p class="text-dark">
                 <span class="decorations">✨</span>¡Alto ahí!<span class="decorations">✨</span><br>
@@ -173,8 +195,10 @@
             </span>
         </div>
 
+        <!-- Botón de flecha limpia -->
         <button class="arrow-btn" id="nextBtn" onclick="changePoem()">➔</button>
 
+        <!-- CONTENEDOR EXCLUSIVO PARA LA FLOR HERMOSA (SIN TEXTO SUPERIOR) -->
         <div id="roseContainer" class="hidden">
             <canvas id="roseCanvas" width="700" height="700"></canvas>
         </div>
@@ -202,9 +226,11 @@
         ];
 
         let currentIndex = 0;
+        let isDarkMode = false;
         const poemCard = document.getElementById('poemCard');
         const nextBtn = document.getElementById('nextBtn');
         const roseContainer = document.getElementById('roseContainer');
+        const glowCanvas = document.getElementById('glowCanvas');
 
         function changePoem() {
             poemCard.classList.add('fade');
@@ -214,10 +240,17 @@
                     poemCard.classList.add('hidden');
                     nextBtn.classList.add('hidden');
                     
+                    // Activar modo oscuro hermoso y mostrar efectos traseros
+                    document.body.classList.add('dark-mode');
+                    isDarkMode = true;
+                    glowCanvas.classList.remove('hidden');
+                    
                     roseContainer.classList.remove('hidden');
                     setTimeout(() => {
                         roseContainer.classList.add('show');
-                        startBeautifulLotus(); // Activa la flor adaptada
+                        glowCanvas.classList.add('show');
+                        initGlowEffect();       // Activa el aura trasera parpadeante
+                        startBeautifulLotus();  // Activa tu flor perfecta adaptada
                     }, 50);
                     return;
                 }
@@ -273,12 +306,16 @@
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.angle);
+                
+                // Si está en modo oscuro, los corazones brillan con más intensidad neón
                 ctx.shadowBlur = this.sparkleSize;
-                ctx.shadowColor = `rgba(255, 190, 180, ${this.alpha})`;
+                ctx.shadowColor = isDarkMode ? `rgba(255, 100, 200, ${this.alpha})` : `rgba(255, 190, 180, ${this.alpha})`;
+                
                 ctx.beginPath();
                 let gradient = ctx.createRadialGradient(0, 0, 1, 0, 0, this.size);
-                gradient.addColorStop(0, `rgba(255, 210, 200, ${this.alpha})`);
-                gradient.addColorStop(0.8, `rgba(240, 123, 101, ${this.alpha})`);
+                gradient.addColorStop(0, `rgba(255, 220, 230, ${this.alpha})`);
+                gradient.addColorStop(0.8, isDarkMode ? `rgba(255, 20, 147, ${this.alpha})` : `rgba(240, 123, 101, ${this.alpha})`);
+                
                 ctx.fillStyle = gradient;
                 ctx.moveTo(0, 0);
                 ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, -this.size / 3, -this.size, 0);
@@ -292,17 +329,56 @@
         for (let i = 0; i < 35; i++) hearts.push(new SparklingHeart());
 
 
+        // --- EFECTO DE RESPLANDOR (AURA) TRASERO MÁGICO ---
+        const gCtx = glowCanvas.getContext('2d');
+        let glowPulse = 0;
+
+        function resizeGlowCanvas() {
+            glowCanvas.width = window.innerWidth;
+            glowCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeGlowCanvas);
+
+        function initGlowEffect() {
+            resizeGlowCanvas();
+            function renderGlow() {
+                gCtx.clearRect(0, 0, glowCanvas.width, glowCanvas.height);
+                
+                let cx = glowCanvas.width / 2;
+                let cy = glowCanvas.height / 2;
+                
+                // Pulso sinusoidal para hacer que el aura respire sutilmente
+                glowPulse += 0.02;
+                let currentGlowRadius = 180 + Math.sin(glowPulse) * 15;
+
+                // Crear un gradiente radial hermoso para simular luz trasera mística
+                let aura = gCtx.createRadialGradient(cx, cy, 10, cx, cy, currentGlowRadius);
+                aura.addColorStop(0, 'rgba(255, 0, 180, 0.25)');   // Centro rosa neón suave
+                aura.addColorStop(0.5, 'rgba(138, 43, 226, 0.12)'); // Intermedio violeta místico
+                aura.addColorStop(1, 'rgba(11, 9, 20, 0)');         // Difuminado completo al fondo
+
+                gCtx.fillStyle = aura;
+                gCtx.beginPath();
+                gCtx.arc(cx, cy, currentGlowRadius, 0, Math.PI * 2);
+                gCtx.fill();
+
+                requestAnimationFrame(renderGlow);
+            }
+            renderGlow();
+        }
+
+
         // --- INTEGRACIÓN ADAPTADA DE TU HERMOSA FLOR DE LOTO VECTORIAL ---
         const roseCanvas = document.getElementById('roseCanvas');
         const rCtx = roseCanvas.getContext('2d');
 
         let currentRotation = 0;
 
-        // Tu función exacta de pétalos bezier limpios y perfectos
+        // Tu función exacta de pétalos bezier perfectos
         function drawPetal(angle, scale, color1, color2) {
             rCtx.save();
-            rCtx.translate(350, 350); // Centro relativo del lienzo de 700x700
-            rCtx.rotate(angle + currentRotation); // Añadimos la rotación interactiva suave
+            rCtx.translate(350, 350); 
+            rCtx.rotate(angle + currentRotation); // Rotación interactiva sutil aplicada aquí
             rCtx.scale(scale, scale);
 
             const g = rCtx.createLinearGradient(0, -220, 0, 20);
@@ -311,7 +387,7 @@
 
             rCtx.fillStyle = g;
             rCtx.shadowColor = "#ff66ff";
-            rCtx.shadowBlur = 15;
+            rCtx.shadowBlur = 20; // Un poco más elevado para resaltar en la oscuridad
 
             rCtx.beginPath();
             rCtx.moveTo(0, 0);
@@ -321,13 +397,13 @@
             rCtx.restore();
         }
 
-        // Sistema de renderizado en bucle con tu estructura exacta de capas
+        // Renderizado continuo con tu estructura exacta de capas
         function startBeautifulLotus() {
             function renderFrame() {
                 rCtx.clearRect(0, 0, 700, 700);
                 
-                // Rotación sutil y progresiva para darle vida a la flor
-                currentRotation += 0.006;
+                // Rotación sutil y progresiva para darle movimiento elegante
+                currentRotation += 0.005;
 
                 // Capa 1: Pétalos Externos
                 for (let i = 0; i < 10; i++) {
@@ -350,7 +426,7 @@
                 centro.addColorStop(1, "#d8a800");
 
                 rCtx.save();
-                rCtx.shadowBlur = 25;
+                rCtx.shadowBlur = 30;
                 rCtx.shadowColor = "#ffff66";
 
                 rCtx.beginPath();
@@ -364,7 +440,7 @@
             renderFrame();
         }
 
-        // Bucle global para la animación trasera de corazones
+        // Bucle global para la animación de fondo (Corazones)
         function globalAnimate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             hearts.forEach(heart => {
