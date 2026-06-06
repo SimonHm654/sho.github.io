@@ -114,7 +114,7 @@
             background-color: #f28b77;
         }
 
-        /* Contenedor limpio para la flor final */
+        /* Contenedor limpio exclusivo para la hermosa flor final */
         #roseContainer {
             opacity: 0;
             transform: scale(0.85);
@@ -136,7 +136,7 @@
             100% { transform: translateY(0px); }
         }
 
-        /* Lienzos generales */
+        /* Canvas de fondo y de la flor */
         canvas {
             position: absolute;
             top: 0;
@@ -148,7 +148,7 @@
 
         #heartCanvas { z-index: 5; }
         
-        /* Tamaño óptimo para apreciar la flor de loto en el centro */
+        /* Contenedor responsivo adaptado para tu hermosa flor */
         #roseCanvas { 
             position: relative; 
             width: 450px; 
@@ -176,7 +176,7 @@
         <button class="arrow-btn" id="nextBtn" onclick="changePoem()">➔</button>
 
         <div id="roseContainer" class="hidden">
-            <canvas id="roseCanvas"></canvas>
+            <canvas id="roseCanvas" width="700" height="700"></canvas>
         </div>
     </div>
 
@@ -217,7 +217,7 @@
                     roseContainer.classList.remove('hidden');
                     setTimeout(() => {
                         roseContainer.classList.add('show');
-                        initLotusFlower(); // Inicializa el renderizado limpio de la flor
+                        startBeautifulLotus(); // Activa la flor adaptada
                     }, 50);
                     return;
                 }
@@ -292,115 +292,79 @@
         for (let i = 0; i < 35; i++) hearts.push(new SparklingHeart());
 
 
-        // --- GEOMETRÍA TRIDIMENSIONAL LIMPIA Y REDEFINIDA DE LA FLOR DE LOTO ---
+        // --- INTEGRACIÓN ADAPTADA DE TU HERMOSA FLOR DE LOTO VECTORIAL ---
         const roseCanvas = document.getElementById('roseCanvas');
         const rCtx = roseCanvas.getContext('2d');
-        roseCanvas.width = 500;
-        roseCanvas.height = 500;
 
-        let globalRotation = 0;
+        let currentRotation = 0;
 
-        function initLotusFlower() {
-            function drawFrame() {
-                rCtx.clearRect(0, 0, roseCanvas.width, roseCanvas.height);
-                
-                let cx = roseCanvas.width / 2;
-                let cy = roseCanvas.height / 2 + 20;
-                globalRotation += 0.008; // Giro continuo, sutil y elegante
+        // Tu función exacta de pétalos bezier limpios y perfectos
+        function drawPetal(angle, scale, color1, color2) {
+            rCtx.save();
+            rCtx.translate(350, 350); // Centro relativo del lienzo de 700x700
+            rCtx.rotate(angle + currentRotation); // Añadimos la rotación interactiva suave
+            rCtx.scale(scale, scale);
 
-                // Array para almacenar y ordenar puntos por profundidad (Z-buffering nativo)
-                let pointsGroup = [];
+            const g = rCtx.createLinearGradient(0, -220, 0, 20);
+            g.addColorStop(0, color1);
+            g.addColorStop(1, color2);
 
-                // 1. GENERACIÓN GEOMÉTRICA DE CAPAS DE PÉTALOS (De adentro hacia afuera)
-                // Capas: 0 = Centro pistilo, 1-5 = Filas de pétalos abiertos superpuestos
-                for (let layer = 0; layer <= 5; layer++) {
-                    let totalPetals = layer === 0 ? 1 : 6 + layer * 4; // Más pétalos en capas externas
-                    let layerRadius = layer * 28;
+            rCtx.fillStyle = g;
+            rCtx.shadowColor = "#ff66ff";
+            rCtx.shadowBlur = 15;
 
-                    for (let p = 0; p < totalPetals; p++) {
-                        let baseAngle = (p * (360 / totalPetals) * Math.PI) / 180;
-                        
-                        // Densidad interna de cada pétalo para rellenarlo de color sólido impecable
-                        for (let lengthFactor = 0.1; lengthFactor <= 1.0; lengthFactor += 0.08) {
-                            let currentRadius = layerRadius * lengthFactor;
-                            
-                            // Ancho de los pétalos (abiertos y curvos como el loto original)
-                            let widthSpread = layer === 0 ? 0 : (1.0 - lengthFactor) * 0.45;
-                            
-                            for (let angleOffset = -widthSpread; angleOffset <= widthSpread; angleOffset += 0.05) {
-                                let theta = baseAngle + angleOffset;
-                                
-                                // Elevación tridimensional del pétalo (Copa cóncava perfecta)
-                                let petalCurve = Math.sin(lengthFactor * Math.PI * 0.5);
-                                let x = currentRadius * Math.cos(theta);
-                                let y = currentRadius * Math.sin(theta);
-                                let z = (layer * 12) - (petalCurve * 35) + (lengthFactor * 15);
-
-                                // Inclinación de cámara realista (Vista superior semi-inclinada)
-                                let tilt = 0.75; 
-                                let tempY = y * Math.cos(tilt) - z * Math.sin(tilt);
-                                let tempZ = y * Math.sin(tilt) + z * Math.cos(tilt);
-
-                                // Rotación global interactiva sobre el eje central
-                                let rotX = x * Math.cos(globalRotation) - tempY * Math.sin(globalRotation);
-                                let rotY = x * Math.sin(globalRotation) + tempY * Math.cos(globalRotation);
-
-                                // Cálculo de perspectiva de lente
-                                let perspective = 450 / (450 + tempZ);
-                                let projX = cx + rotX * perspective;
-                                let projY = cy + rotY * perspective;
-
-                                // ASIGNACIÓN MATRICIAL DE COLORES (Idéntica a la imagen de referencia)
-                                let colorString = "";
-                                if (layer === 0) {
-                                    // Centro absoluto: Pistilo amarillo vibrante
-                                    colorString = `rgba(243, 226, 45, 0.95)`;
-                                } else {
-                                    // Pétalos degradados: Puntas magenta, base blanca pura
-                                    if (lengthFactor > 0.7) {
-                                        // Extremo exterior del pétalo: Magenta/Violeta encendido e intenso
-                                        let edgeTone = (lengthFactor - 0.7) / 0.3;
-                                        colorString = `rgba(${205 + edgeTone * 30}, 20, ${165 + edgeTone * 40}, 0.9)`;
-                                    } else if (lengthFactor > 0.35) {
-                                        // Transición: Rosa difuminado suave
-                                        let midTone = (lengthFactor - 0.35) / 0.35;
-                                        colorString = `rgba(245, ${150 - midTone * 100}, ${220 - midTone * 40}, 0.85)`;
-                                    } else {
-                                        // Base interna del pétalo: Blanco puro/crema sedoso
-                                        colorString = `rgba(255, 252, 255, 0.9)`;
-                                    }
-                                }
-
-                                // Guardamos el punto con su profundidad Z para ordenarlos
-                                pointsGroup.push({
-                                    x: projX,
-                                    y: projY,
-                                    z: tempZ,
-                                    size: Math.max(0.8, (layer === 0 ? 2.5 : 4.0) * perspective),
-                                    color: colorString
-                                });
-                            }
-                        }
-                    }
-                }
-
-                // 2. ORDENAMIENTO DE PROFUNDIDAD (Pinta de atrás hacia adelante para evitar transparencias rotas)
-                pointsGroup.sort((pointA, pointB) => pointB.z - pointA.z);
-
-                // 3. RENDERIZADO NETO EN PANTALLA
-                pointsGroup.forEach(point => {
-                    rCtx.beginPath();
-                    rCtx.fillStyle = point.color;
-                    rCtx.arc(point.x, point.y, point.size, 0, Math.PI * 2);
-                    rCtx.fill();
-                });
-
-                requestAnimationFrame(drawFrame);
-            }
-            drawFrame();
+            rCtx.beginPath();
+            rCtx.moveTo(0, 0);
+            rCtx.bezierCurveTo(-50, -40, -90, -180, 0, -260);
+            rCtx.bezierCurveTo(90, -180, 50, -40, 0, 0);
+            rCtx.fill();
+            rCtx.restore();
         }
 
-        // Bucle global de animación de fondo
+        // Sistema de renderizado en bucle con tu estructura exacta de capas
+        function startBeautifulLotus() {
+            function renderFrame() {
+                rCtx.clearRect(0, 0, 700, 700);
+                
+                // Rotación sutil y progresiva para darle vida a la flor
+                currentRotation += 0.006;
+
+                // Capa 1: Pétalos Externos
+                for (let i = 0; i < 10; i++) {
+                    drawPetal(i * Math.PI * 2 / 10, 1.15, "#ffffff", "#ff00ff");
+                }
+
+                // Capa 2: Pétalos Medios
+                for (let i = 0; i < 10; i++) {
+                    drawPetal(i * Math.PI * 2 / 10 + 0.3, 0.9, "#fff8ff", "#ff66ff");
+                }
+
+                // Capa 3: Pétalos Internos
+                for (let i = 0; i < 8; i++) {
+                    drawPetal(i * Math.PI * 2 / 8, 0.65, "#ffffff", "#ff99ff");
+                }
+
+                // Centro de la Flor: Pistilo Amarillo Perfecto de tu código
+                const centro = rCtx.createRadialGradient(350, 350, 5, 350, 350, 70);
+                centro.addColorStop(0, "#ffffaa");
+                centro.addColorStop(1, "#d8a800");
+
+                rCtx.save();
+                rCtx.shadowBlur = 25;
+                rCtx.shadowColor = "#ffff66";
+
+                rCtx.beginPath();
+                rCtx.arc(350, 350, 45, 0, Math.PI * 2);
+                rCtx.fillStyle = centro;
+                rCtx.fill();
+                rCtx.restore();
+
+                requestAnimationFrame(renderFrame);
+            }
+            renderFrame();
+        }
+
+        // Bucle global para la animación trasera de corazones
         function globalAnimate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             hearts.forEach(heart => {
