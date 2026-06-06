@@ -31,7 +31,7 @@
             align-items: center;
             justify-content: center;
             width: 90%;
-            max-width: 420px;
+            max-width: 450px;
         }
 
         /* Recuadro de los poemas iniciales */
@@ -122,6 +122,7 @@
             flex-direction: column;
             align-items: center;
             z-index: 15;
+            width: 100%;
         }
 
         #roseContainer.show {
@@ -132,17 +133,17 @@
         /* Texto final romántico arriba de la rosa */
         .final-message {
             color: #4a2810;
-            font-size: 32px;
+            font-size: 30px;
             font-weight: 700;
             text-align: center;
-            margin-bottom: -10px;
+            margin-bottom: -15px;
             line-height: 1.3;
         }
 
         .final-message span {
-            color: #f07b65;
+            color: #d11790;
             display: block;
-            font-size: 38px;
+            font-size: 36px;
             margin-top: 5px;
         }
 
@@ -163,7 +164,7 @@
         }
 
         #heartCanvas { z-index: 5; }
-        #roseCanvas { position: relative; width: 350px; height: 350px; z-index: 10; }
+        #roseCanvas { position: relative; width: 400px; height: 400px; z-index: 10; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -185,13 +186,13 @@
         <button class="arrow-btn" id="nextBtn" onclick="changePoem()">➔</button>
 
         <div id="roseContainer" class="hidden">
-            <h2 class="final-message">Te lo dije en código... <span>¡Y aquí está tu rosa! 🌹</span></h2>
+            <h2 class="final-message">Te lo dije en código... <span>¡Aquí está tu flor! 🌸</span></h2>
             <canvas id="roseCanvas"></canvas>
         </div>
     </div>
 
     <script>
-        // --- POEMAS CON ORTOGRAFÍA IMPECABLE ---
+        // --- POEMAS CON ORTOGRAFÍA REVISADA ---
         const poems = [
             {
                 dark: "<span class='decorations'>✨</span>¡Alto ahí!<span class='decorations'>✨</span><br>Vienes con",
@@ -220,7 +221,6 @@
             poemCard.classList.add('fade');
 
             setTimeout(() => {
-                // Si ya pasamos todos los poemas, disparamos el final de la rosa
                 if (currentIndex === poems.length - 1) {
                     poemCard.classList.add('hidden');
                     nextBtn.classList.add('hidden');
@@ -228,18 +228,16 @@
                     roseContainer.classList.remove('hidden');
                     setTimeout(() => {
                         roseContainer.classList.add('show');
-                        initRose(); // Empieza a renderizar la rosa matemática
+                        initRose(); 
                     }, 50);
                     return;
                 }
 
                 currentIndex++;
-                
                 poemCard.innerHTML = `
                     <p class="text-dark">${poems[currentIndex].dark}</p>
                     <span class="text-pink">${poems[currentIndex].pink}</span>
                 `;
-                
                 poemCard.classList.remove('fade');
             }, 300);
         }
@@ -305,12 +303,11 @@
         for (let i = 0; i < 35; i++) hearts.push(new SparklingHeart());
 
 
-        // --- TRADUCCIÓN DEL CÓDIGO MATEMÁTICO DE LA ROSA 3D (DE PYTHON A CANVAS 2D/3D) ---
-        // Adapta las funciones paramétricas de la flor tridimensional
+        // --- PROYECCIÓN MATEMÁTICA REAL DE LA FLOR DE LOTO EN 3D ---
         const roseCanvas = document.getElementById('roseCanvas');
         const rCtx = roseCanvas.getContext('2d');
-        roseCanvas.width = 350;
-        roseCanvas.height = 350;
+        roseCanvas.width = 400;
+        roseCanvas.height = 400;
 
         let rotationAngle = 0;
 
@@ -319,41 +316,64 @@
                 rCtx.clearRect(0, 0, roseCanvas.width, roseCanvas.height);
                 
                 let cx = roseCanvas.width / 2;
-                let cy = roseCanvas.height / 2 + 20;
-                rotationAngle += 0.015; // Velocidad de giro automático de la rosa
+                let cy = roseCanvas.height / 2 + 30;
+                rotationAngle += 0.01; // Velocidad de rotación lenta y elegante
 
-                // Proyección de puntos basada en la estructura matemática de pétalos de Python
-                for (let r = 0; r < 30; r += 0.4) {
-                    for (let theta = 0; theta < 360; theta += 4) {
+                // Algoritmo de mapeo de pétalos abiertos superpuestos
+                for (let r = 0.1; r < 35; r += 0.5) {
+                    for (let theta = 0; theta < 360; theta += 2.5) {
                         let radTheta = (theta * Math.PI) / 180;
-                        let radR = r / 15;
-                        
-                        // Ecuación matemática de la forma de los pétalos de flor
-                        let phi = (Math.PI / 2) * Math.exp(-radTheta / (8 * Math.PI));
-                        let p = 1.65 * Math.sin(radR * 1.65);
-                        let u = 0.5 + Math.abs(Math.sin(p * radTheta)) / 2;
-                        
-                        // Coordenadas espaciales tridimensionales de la rosa (X, Y, Z)
-                        let x = r * Math.sin(phi) * Math.cos(radTheta) * u * 4.5;
-                        let y = r * Math.sin(phi) * Math.sin(radTheta) * u * 4.5;
-                        let z = r * Math.cos(phi) * 4.5 - 50;
+                        let radR = r / 20;
 
-                        // Rotación tridimensional de la rosa en los ejes
-                        let rotX = x * Math.cos(rotationAngle) - y * Math.sin(rotationAngle);
-                        let rotY = x * Math.sin(rotationAngle) + y * Math.cos(rotationAngle);
-                        
-                        // Proyección en perspectiva simple de los pétalos
-                        let perspective = 300 / (300 + z);
+                        // Ecuación modificada para aplanar y abrir la flor en forma de loto espacioso
+                        let phi = (Math.PI / 2) * Math.sin(radR * Math.PI * 0.5); 
+                        // Simulación de las ondulaciones de las capas de pétalos individuales
+                        let petalLayers = Math.sin(6 * radTheta) * 0.12 + Math.cos(3 * radTheta) * 0.05;
+                        let u = 1.2 * (radR + petalLayers);
+
+                        // Coordenadas tridimensionales esféricas abiertas
+                        let x = r * Math.sin(phi) * Math.cos(radTheta) * u * 4.2;
+                        let y = r * Math.sin(phi) * Math.sin(radTheta) * u * 4.2;
+                        // Ajuste del eje Z para deprimir el centro y ensanchar la copa de la flor
+                        let z = (35 - r) * Math.cos(phi) * 4.0 - (Math.pow(r, 1.2) * 0.5);
+
+                        // Rotación en el espacio 3D (Eje X ligeramente inclinado y rotación en Y)
+                        let tiltAngle = 0.6; // Ángulo de inclinación para apreciarla desde arriba
+                        let tempY = y * Math.cos(tiltAngle) - z * Math.sin(tiltAngle);
+                        let tempZ = y * Math.sin(tiltAngle) + z * Math.cos(tiltAngle);
+
+                        let rotX = x * Math.cos(rotationAngle) - tempY * Math.sin(rotationAngle);
+                        let rotY = x * Math.sin(rotationAngle) + tempY * Math.cos(rotationAngle);
+
+                        // Proyección en perspectiva de profundidad
+                        let perspective = 400 / (400 + tempZ);
                         let projX = cx + rotX * perspective;
-                        let projY = cy + rotY * perspective - z * 0.3;
+                        let projY = cy + rotY * perspective;
 
-                        // Paleta de colores degradados rosa, magenta y loto de tu captura
+                        // DISTRIBUCIÓN DE COLOR IDÉNTICA A LA FLOR REAL
                         rCtx.beginPath();
-                        let distanceFactor = r / 30;
-                        rCtx.fillStyle = `rgba(${220 + distanceFactor * 35}, ${50 + distanceFactor * 100}, ${120 + distanceFactor * 40}, 0.85)`;
                         
-                        // Efecto luminoso en cada pétalo programado
-                        rCtx.arc(projX, projY, Math.max(0.5, 1.8 * perspective), 0, Math.PI * 2);
+                        if (r < 5) {
+                            // 1. Núcleo central: Pistilo amarillo brillante
+                            rCtx.fillStyle = `rgba(235, 230, 40, ${0.85 - r*0.05})`;
+                        } else if (r >= 5 && r < 14) {
+                            // 2. Transición interna: Degradado de blanco sedoso a rosa claro
+                            let t = (r - 5) / 9;
+                            let red = 245 + t * 10;
+                            let green = 240 - t * 120;
+                            let blue = 245 - t * 50;
+                            rCtx.fillStyle = `rgba(${red}, ${green}, ${blue}, 0.9)`;
+                        } else {
+                            // 3. Pétalos externos: Magenta / Violeta encendido e intenso
+                            let t = (r - 14) / 21;
+                            let red = 210 - t * 40;   // Se vuelve más profundo
+                            let green = 30 - t * 20;  // Mantiene la pureza
+                            let blue = 170 + t * 45;  // Realza el tono violeta del borde
+                            rCtx.fillStyle = `rgba(${red}, ${green}, ${blue}, 0.85)`;
+                        }
+
+                        // Dibujar cada partícula matemática de los pétalos
+                        rCtx.arc(projX, projY, Math.max(0.6, 2.0 * perspective), 0, Math.PI * 2);
                         rCtx.fill();
                     }
                 }
